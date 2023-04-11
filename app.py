@@ -13,15 +13,9 @@ def store():
     request_data = request_json['data']
     object_file = request_data['file']
 
-    directory_name = str(uuid.uuid1())
-
-    os.mkdir(directory_name)
-
     b64 = object_file['b64']
     filename = object_file['name']
     mimetype = object_file['mimetype']
-
-    path_file = directory_name + filename + '.pdf'
 
     # Decode the Base64 string, making sure that it contains only valid characters
     _bytes = b64decode(b64, validate=True)
@@ -31,6 +25,8 @@ def store():
     # Moreover, if you get Base64 from an untrusted source, you must sanitize the PDF contents
     if _bytes[0:4] != b'%PDF':
         raise ValueError('Missing the PDF file signature')
+
+    path_file = str(uuid.uuid1()) + filename + '.pdf'
 
     # Write the PDF contents to a local file
     f = open(path_file, 'wb')
@@ -45,12 +41,16 @@ def store():
         page_object = reader.pages[page]
         page_content = page_object.extract_text()
         index_page = page + 1
-        paginate = "page " + str(index_page)
+        paginate = str(index_page)
         pagination[paginate] = page_content.replace('\n', ' ')
+
+    os.remove(path_file)
 
     return {
         "data": {
-            "attributes": pagination
+            "attributes": {
+                "pages": pagination
+            }
         }
     }
 
