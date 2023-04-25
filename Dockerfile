@@ -1,25 +1,27 @@
-FROM python:3.12.0a4-alpine3.17
+FROM python:3.11.3-alpine3.17
 
-# Set the working directory to /app Such that inside
-# the container our working directory will be app.
-WORKDIR /app
+RUN mkdir "/srv/flask-app"
+
+COPY . /srv/flask_app
+
+WORKDIR /srv/flask_app
 
 # Update, Upgrade and install development dependencies.
 # (Add more based on the requirement of the packages you wanted to install)
 RUN apk --update --upgrade add --no-cache gcc musl-dev  \
     jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf-dev
 
+#install
+RUN apk add --no-cache nginx=1.22.1-r0 python3-dev uwsgi-python3
+
 # Upgrading pip
 RUN python -m pip install --upgrade pip
 
-# Copy requirements.txt
-COPY requirements.txt ./
-
 # Install the Python dependencies.
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --src /usr/local/src
 
-# Copy the current directory . in the project to the workdir . in the image.
-COPY . .
+COPY nginx.conf /etc/nginx
 
-EXPOSE 5000
-CMD [ "flask", "run","--host","0.0.0.0","--port","5000"]
+RUN chmod +x ./start.sh
+
+CMD ["./start.sh"]
