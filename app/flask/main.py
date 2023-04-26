@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from getpass import getuser
 from PyPDF2 import PdfReader
 from base64 import b64decode
 import os
@@ -56,4 +57,4 @@ def store():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
