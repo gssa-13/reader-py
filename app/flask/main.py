@@ -8,7 +8,7 @@ import uuid
 app = Flask(__name__)
 
 
-@app.route("/", methods=['POST'])
+@app.route("/api/v1/link/tools", methods=['POST'])
 def store():
     request_json = request.get_json()
     request_data = request_json['data']
@@ -37,20 +37,20 @@ def store():
     pagination = {}
     reader = PdfReader(path_file)
     number_of_pages = len(reader.pages)
+    content = ' '
 
     for page in range(number_of_pages):
         page_object = reader.pages[page]
         page_content = page_object.extract_text()
-        index_page = page + 1
-        paginate = str(index_page)
-        pagination[paginate] = page_content.replace('\n', ' ')
+
+        content = content + page_content.replace('\n', ' ')
 
     os.remove(path_file)
 
     return {
         "data": {
             "attributes": {
-                "pages": pagination
+                "content": content.strip()
             }
         }
     }
