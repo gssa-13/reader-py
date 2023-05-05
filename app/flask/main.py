@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-from getpass import getuser
 from PyPDF2 import PdfReader
 from base64 import b64decode
 import os
@@ -7,10 +6,14 @@ import uuid
 
 app = Flask(__name__)
 
-@app.route("/ping", methods=['GET'])
+@app.route("/ping")
 def show():
     return {
-        "Este es un mensaje de prueba para configurar el subdominio"
+        "data": {
+            "attributes": {
+                "content": "Este es un mensaje de prueba para configurar el subdominio"
+            }
+        }
     }
 
 
