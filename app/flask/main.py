@@ -7,6 +7,12 @@ import uuid
 
 app = Flask(__name__)
 
+@app.route("/ping", methods=['GET'])
+def show():
+    return {
+        "Este es un mensaje de prueba para configurar el subdominio"
+    }
+
 
 @app.route("/api/v1/link/tools", methods=['POST'])
 def store():
