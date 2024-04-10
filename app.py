@@ -83,7 +83,7 @@ def pdf_reader_images():
             extracted_text = pytesseract.image_to_string(img, lang='spa')
             cleaned_text = extracted_text.replace('\n', ' ')
             cleaned_text = cleaned_text.replace('  ', ' ')
-            images.append(extracted_text)
+            images.append(cleaned_text)
 
     rmtree(str_uuid)
 
