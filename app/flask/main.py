@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from base64 import b64decode
 import os
 import uuid
@@ -43,23 +43,25 @@ def store():
     f.write(_bytes)
     f.close()
 
+    print(path_file)
+
     pagination = {}
     reader = PdfReader(path_file)
     number_of_pages = len(reader.pages)
-    content = ' '
 
     for page in range(number_of_pages):
         page_object = reader.pages[page]
         page_content = page_object.extract_text()
-
-        content = content + page_content.replace('\n', ' ')
+        index_page = page + 1
+        paginate = str(index_page)
+        pagination[paginate] = page_content.replace('\n', ' ').strip()
 
     os.remove(path_file)
 
     return {
         "data": {
             "attributes": {
-                "content": content.strip()
+                "pages": pagination
             }
         }
     }
